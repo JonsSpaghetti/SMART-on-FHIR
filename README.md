@@ -19,9 +19,14 @@
 ## Steps:
 1. Launch via EMR/sandbox
     * Land on the /launch page.
-2. Hit button to get authorization code
-    * POST to /launch/auth endpoint.
+    * Query string parameter for iss will be FHIR base URL
+    * Query string parameter for launch will be launch token
+2. Hit button to exchange launch token for authorization code
+    * GET to iss/metadata endpoint to get OAuth auth/token URLs.
+    * POST to /launch/auth endpoint with launch token to get authorization code.
     * Redirect will land you on /launch/code page.
+        * Access code will be in the code query string parameter.
 3. Hit button to get access token
     * GET to /launch/access endpoint will in turn POST to token endpoint.
+        * Authorization header using Basic auth + base64 encoded combination of clientID:clientSecret.
 4. Land on /launch/access page with access token on page.
