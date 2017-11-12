@@ -1,0 +1,7 @@
+block content
+  div client ID : #{clientId}
+  div authorization code : #{authCode}
+  form(action='/launch/access', method='get')
+    input(type="hidden", name="code" value=authCode)
+    input(type="hidden", name="state" value=state)
+    button#btnSubmit(type="submit") Get access code

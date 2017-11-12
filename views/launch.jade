@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  div request parameters : #{params}
+  div request body : #{body}
+  div iss : #{iss}
+  div launch : #{launch}
+  div path : #{path}
+  div auth : #{auth}
+  div token : #{token}
+  form(action='/launch/auth', method='post')
+    input(type="hidden", name="authUrl" value=auth)
+    input(type="hidden", name="launch" value=launch)
+    input(type="hidden", name="token" value=token)
+    button#btnSubmit(type="submit") Get auth code
