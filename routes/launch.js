@@ -30,6 +30,10 @@ router.get('/', function(req, res, next){ //Get request to /launch
     //decode iss parameter from query string, get launch token from query string.
     decodeIss = decodeURIComponent(req.query.iss); 
     launch = req.query.launch;
+    //for testing purposes
+    // arr = decodeIss.split('/');
+    // arr.pop();
+    // decodeIss = arr.join('/');
 
     //Get the conformance statement from metadata endpoint
     //On completion, we call res.render to avoid getting errors that authURL isn't defined
@@ -101,10 +105,7 @@ router.get('/access', function(req, res, next){
     postConfig = {
        method: 'POST',
        url: tokenUrl,
-       body: "grant_type=authorization_code&code=" + authCode + "&redirect_uri=" + redirectURI,
-        //   grant_type: 'authorization_code',
-        //   code: authCode,
-        //   redirect_uri: redirectURI,
+       body: "grant_type=authorization_code&code=" + authCode + "&redirect_uri=" + redirectURI,// + "&client_id=" + clientId + "&client_secret=" + clientSecret,
        headers: {'content-type': "application/x-www-form-urlencoded",
             Authorization: "Basic " + authHeader,
        },
@@ -120,6 +121,7 @@ router.get('/access', function(req, res, next){
                 token_type: reqBod.token_type,
                 scope: reqBod.scope,
                 patient: reqBod.patient,
+                body: JSON.stringify(body)
             })
         }
     });    
