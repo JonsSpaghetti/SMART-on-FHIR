@@ -8,6 +8,12 @@
 5. npm start
 6. Hit the buttons as they show up and see what is getting passed around during the OAuth2 workflow.
 
+Format of client.json:
+{
+    "clientId" : "client ID",
+    "clientSecret" : "client secret"
+}
+
 # OAuth2 flow
 
 ## Express server output:
