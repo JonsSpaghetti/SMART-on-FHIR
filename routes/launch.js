@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var parseXML = require('xml2js').parseString;
 var fs = require("fs");
 
 //flow of views is launch (from first redirect) -> code (when we have access code) -> access (when we have access token).
@@ -34,9 +35,15 @@ router.get('/', function(req, res, next){ //Get request to /launch
     //On completion, we call res.render to avoid getting errors that authURL isn't defined
     request.get(decodeIss + '/metadata', {}, function(error, response, body){
         if (!error){
-            authUrl = JSON.parse(body);
-            //authURL.rest[0].security = location of oauth URIs
-            authUrl = authUrl.rest[0].security.extension[0];
+            parseXML(body, function(err, result){
+                authUrl = result.Conformance.rest[0].security[0].extension[0].extension[0].valueUri[0].$.value;
+                tokenUrl = result.Conformance.rest[0].security[0].extension[0].extension[1].valueUri[0].$.value;
+                //console.log(result);
+            });
+            // Not used with Epic sandbox.
+            // authUrl = JSON.parse(body);
+            // //authURL.rest[0].security = location of oauth URIs
+            // authUrl = authUrl.rest[0].security.extension[0];
 
             res.render('launch', {
                 params: JSON.stringify(req.params),
@@ -44,8 +51,8 @@ router.get('/', function(req, res, next){ //Get request to /launch
                 iss: decodeIss,
                 launch: launch,
                 path: req.path,
-                auth: authUrl.extension[0].valueUri,
-                token: authUrl.extension[1].valueUri,
+                auth: authUrl,
+                token: tokenUrl,
             });
         }
     });
