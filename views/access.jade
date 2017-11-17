@@ -1,8 +1,21 @@
 extends layout
 
 block content
-  div token : #{token}
-  div token type : #{token_type}
-  div scope : #{scope}
-  div patient : #{patient}
-  div body : #{body}
+  table
+    thead
+    tbody
+    tr
+      td token 
+      td=token
+    tr
+      td token type 
+      td=token_type
+    tr
+      td scope 
+      td=scope
+    tr
+      td patient
+      td=patient
+    tr
+      td body
+      td=body

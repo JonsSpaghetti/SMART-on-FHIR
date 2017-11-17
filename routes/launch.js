@@ -50,8 +50,6 @@ router.get('/', function(req, res, next){ //Get request to /launch
             // authUrl = authUrl.rest[0].security.extension[0];
 
             res.render('launch', {
-                params: JSON.stringify(req.params),
-                body: JSON.stringify(req.body),
                 iss: decodeIss,
                 launch: launch,
                 path: req.path,
@@ -98,7 +96,10 @@ router.get('/access', function(req, res, next){
     state = req.query.state;
 
     //Auth header needs base64 encoding of clientId:clientSecret
-    toEncode = clientId + ":" + clientSecret
+    //Try also url encoding client ID + secret
+    //toEncode = encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret);
+    toEncode = clientId + ":" + clientSecret;
+    //toEncode = encodeURIComponent(toEncode);// is this needed?
     buff = new Buffer(toEncode);
     authHeader = buff.toString('base64');
 
@@ -111,10 +112,11 @@ router.get('/access', function(req, res, next){
        },
     }
 
-    post = request(postConfig, function(error, request, body){
+    post = request(postConfig, function(error, response, body){
         if(!error){
             // res.render('index');
             // res.send(body)
+            console.log(JSON.stringify(post, null, 4))
             reqBod = JSON.parse(body);
             res.render('access', {
                 token: reqBod.access_token,
