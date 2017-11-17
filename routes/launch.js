@@ -30,6 +30,10 @@ router.get('/', function(req, res, next){ //Get request to /launch
     //decode iss parameter from query string, get launch token from query string.
     decodeIss = decodeURIComponent(req.query.iss); 
     launch = req.query.launch;
+    //for testing purposes
+    // arr = decodeIss.split('/');
+    // arr.pop();
+    // decodeIss = arr.join('/');
 
     //Get the conformance statement from metadata endpoint
     //On completion, we call res.render to avoid getting errors that authURL isn't defined
@@ -46,8 +50,6 @@ router.get('/', function(req, res, next){ //Get request to /launch
             // authUrl = authUrl.rest[0].security.extension[0];
 
             res.render('launch', {
-                params: JSON.stringify(req.params),
-                body: JSON.stringify(req.body),
                 iss: decodeIss,
                 launch: launch,
                 path: req.path,
@@ -94,32 +96,34 @@ router.get('/access', function(req, res, next){
     state = req.query.state;
 
     //Auth header needs base64 encoding of clientId:clientSecret
-    toEncode = clientId + ":" + clientSecret
+    //Try also url encoding client ID + secret
+    //toEncode = encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret);
+    toEncode = clientId + ":" + clientSecret;
+    //toEncode = encodeURIComponent(toEncode);// is this needed?
     buff = new Buffer(toEncode);
     authHeader = buff.toString('base64');
 
     postConfig = {
        method: 'POST',
        url: tokenUrl,
-       body: "grant_type=authorization_code&code=" + authCode + "&redirect_uri=" + redirectURI,
-        //   grant_type: 'authorization_code',
-        //   code: authCode,
-        //   redirect_uri: redirectURI,
+       body: "grant_type=authorization_code&code=" + authCode + "&redirect_uri=" + redirectURI,// + "&client_id=" + clientId + "&client_secret=" + clientSecret,
        headers: {'content-type': "application/x-www-form-urlencoded",
             Authorization: "Basic " + authHeader,
        },
     }
 
-    post = request(postConfig, function(error, request, body){
+    post = request(postConfig, function(error, response, body){
         if(!error){
             // res.render('index');
             // res.send(body)
+            console.log(JSON.stringify(post, null, 4))
             reqBod = JSON.parse(body);
             res.render('access', {
                 token: reqBod.access_token,
                 token_type: reqBod.token_type,
                 scope: reqBod.scope,
                 patient: reqBod.patient,
+                body: JSON.stringify(body)
             })
         }
     });    

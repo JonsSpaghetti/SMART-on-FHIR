@@ -1,6 +1,15 @@
+extends layout
 block content
-  div client ID : #{clientId}
-  div authorization code : #{authCode}
+  table
+    thead
+    tbody
+    tr
+      td client ID 
+      td=clientId
+    tr
+      td authorization code
+      td=authCode
+
   form(action='/launch/access', method='get')
     input(type="hidden", name="code" value=authCode)
     input(type="hidden", name="state" value=state)
