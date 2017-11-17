@@ -72,7 +72,12 @@ router.post('/auth', function(req, res, next){
     authUrl = req.body.authUrl;
     launchToken = req.body.launch;
     tokenUrl = req.body.token;
-    redirectURI = encodeURIComponent("http://localhost:3000/launch/code")
+    if(process.env.NODE_ENV = "production"){
+        redirectURI = encodeURIComponent("https://damp-river-36466.herokuapp.com/launch/code");
+    }
+    else {
+        redirectURI = encodeURIComponent("http://localhost:3000/launch/code");
+    }
     postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss) 
     postUrl = postUrl.replace("\"","");
     res.redirect(postUrl);
