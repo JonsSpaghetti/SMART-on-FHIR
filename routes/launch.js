@@ -15,16 +15,21 @@ var fs = require("fs");
 
 var fileName = "../client.json"
 var config
-
-try {
-   config = require(fileName); 
-} catch (error) {
-   config = {}
-   console.log("Unable to read file " + fileName);
+if (process.env.NODE_ENV != "production"){
+    try {
+        config = require(fileName); 
+        clientId = config.clientId
+        clientSecret = config.clientSecret
+    } catch (error) {
+        config = {}
+        console.log("Unable to read file " + fileName);
+    }
 }
 
-clientId = config.clientId
-clientSecret = config.clientSecret
+else{
+    clientId = process.env.clientId;
+    clientSecret = process.env.clientSecret;
+}
 
 router.get('/', function(req, res, next){ //Get request to /launch
     //decode iss parameter from query string, get launch token from query string.
