@@ -131,6 +131,7 @@ router.get('/access', function(req, res, next){
             res.render('access', {
                 token: reqBod.access_token,
                 token_type: reqBod.token_type,
+                refresh: reqBod.refresh_token, //do we even have this?
                 scope: reqBod.scope,
                 patient: reqBod.patient,
                 body: JSON.stringify(body)
