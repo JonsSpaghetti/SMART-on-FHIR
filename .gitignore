@@ -58,5 +58,5 @@ typings/
 .env
 
 # client secret file
-client.json
+*client.json
 

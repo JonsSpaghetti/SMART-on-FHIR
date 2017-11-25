@@ -13,15 +13,15 @@ var fs = require("fs");
 //so /launch/ -> /launch/auth upon button to get auth code -> redirect to /launch/code.
 //from /launch/code, hit button to get access token -> /launch/access -> hit token endpoint -> display access page.
 
-var fileName = "../client.json"
-var config
+var fileName = "../client.json";
+var config;
 if (process.env.NODE_ENV != "production"){
     try {
         config = require(fileName); 
-        clientId = config.clientId
-        clientSecret = config.clientSecret
+        clientId = config.clientId;
+        clientSecret = config.clientSecret;
     } catch (error) {
-        config = {}
+        config = {};
         console.log("Unable to read file " + fileName);
     }
 }
@@ -78,7 +78,7 @@ router.post('/auth', function(req, res, next){
     else {
         redirectURI = encodeURIComponent("http://localhost:3000/launch/code");
     }
-    postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss) 
+    postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss);
     postUrl = postUrl.replace("\"","");
     res.redirect(postUrl);
 /*     request.post(postUrl, {}, function(error, response, body){
@@ -126,7 +126,7 @@ router.get('/access', function(req, res, next){
         if(!error){
             // res.render('index');
             // res.send(body)
-            console.log(JSON.stringify(post, null, 4))
+            console.log(JSON.stringify(post, null, 4));
             reqBod = JSON.parse(body);
             res.render('access', {
                 token: reqBod.access_token,
