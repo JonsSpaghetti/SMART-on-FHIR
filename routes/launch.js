@@ -14,6 +14,7 @@ var fs = require("fs");
 //from /launch/code, hit button to get access token -> /launch/access -> hit token endpoint -> display access page.
 //Maybe at some point, use https://github.com/tjanczuk/iisnode to host on iis locally
 
+<<<<<<< HEAD
 var fileName = "../client.json"
 var config
 var st, end //start and end times for testing
@@ -22,8 +23,17 @@ if (process.env.NODE_ENV != "production") {
         config = require(fileName);
         clientId = config.clientId
         clientSecret = config.clientSecret
+=======
+var fileName = "../client.json";
+var config;
+if (process.env.NODE_ENV != "production"){
+    try {
+        config = require(fileName); 
+        clientId = config.clientId;
+        clientSecret = config.clientSecret;
+>>>>>>> 1416f038778fae8255e6dc0f68098845231e911e
     } catch (error) {
-        config = {}
+        config = {};
         console.log("Unable to read file " + fileName);
     }
 }
@@ -85,10 +95,13 @@ router.post('/auth', function (req, res, next) {
     else {
         redirectURI = encodeURIComponent("http://localhost:3000/launch/code");
     }
+<<<<<<< HEAD
     postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss)
     postUrl = postUrl.replace("\"", "");
-
-    console.log(postUrl);
+=======
+    postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss);
+    postUrl = postUrl.replace("\"","");
+>>>>>>> 1416f038778fae8255e6dc0f68098845231e911e
     res.redirect(postUrl);
     /*     request.post(postUrl, {}, function(error, response, body){
             console.log(postUrl);
@@ -137,7 +150,7 @@ router.get('/access', function (req, res, next) {
         if (!error) {
             // res.render('index');
             // res.send(body)
-            console.log(JSON.stringify(post, null, 4))
+            console.log(JSON.stringify(post, null, 4));
             reqBod = JSON.parse(body);
             var vars = {
                     token: reqBod.access_token,
