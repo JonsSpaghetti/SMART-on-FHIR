@@ -84,13 +84,8 @@ router.post('/auth', function (req, res, next) {
     else {
         redirectURI = encodeURIComponent("http://localhost:3000/launch/code");
     }
-<<<<<<< HEAD
-    postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss)
-    postUrl = postUrl.replace("\"", "");
-=======
     postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss);
     postUrl = postUrl.replace("\"","");
->>>>>>> 1416f038778fae8255e6dc0f68098845231e911e
     res.redirect(postUrl);
     /*     request.post(postUrl, {}, function(error, response, body){
             console.log(postUrl);
