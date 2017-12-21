@@ -1,0 +1,6 @@
+{% extends "layout.nunjucks" %}
+
+{% block content %}
+There was an error.
+{{ error.stack }}
+{% endblock %}

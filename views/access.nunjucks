@@ -1,0 +1,17 @@
+{% extends "layout.nunjucks" %}
+
+{% block content %}
+<h3>Step 3 </h3>
+    <h5>
+        You queried the token endpoint to get an access token and a refresh token.  You can now use these to call FHIR endpoints.
+    </h5>
+
+  <table>
+    {% for key, value in vars %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>    
+    {% endfor %}
+  </table>
+{% endblock %}

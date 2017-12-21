@@ -1,0 +1,22 @@
+{% extends "layout.nunjucks" %}
+
+{% block content %}
+<h3>Step 2 </h3>
+    <h5>
+      You query the OAuth2 authorize endpoint in order to get an authorization code.  Now you have one as seen below.
+    </h5>
+
+  <table>
+    {% for key, value in vars %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>    
+    {% endfor %}
+  </table>
+  <form action='/launch/access' method='get'>
+    <input type="hidden" name="code" value={{vars.authCode}}/>
+    <input type="hidden" name="state" value={{vars.state}}/>
+    <button class="btnSubmit" type="submit">Get access token</button>
+  </form>
+{% endblock %}
