@@ -20,7 +20,6 @@ if (process.env.NODE_ENV != "production"){
         config = require(fileName); 
         clientId = config.clientId;
         clientSecret = config.clientSecret;
->>>>>>> 1416f038778fae8255e6dc0f68098845231e911e
     } catch (error) {
         config = {};
         console.log("Unable to read file " + fileName);
