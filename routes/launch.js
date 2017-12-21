@@ -14,17 +14,6 @@ var fs = require("fs");
 //from /launch/code, hit button to get access token -> /launch/access -> hit token endpoint -> display access page.
 //Maybe at some point, use https://github.com/tjanczuk/iisnode to host on iis locally
 
-<<<<<<< HEAD
-var fileName = "../client.json"
-var config
-var st, end //start and end times for testing
-if (process.env.NODE_ENV != "production") {
-    try {
-        config = require(fileName);
-        clientId = config.clientId
-        clientSecret = config.clientSecret
-=======
-var fileName = "../client.json";
 var config;
 if (process.env.NODE_ENV != "production"){
     try {
@@ -39,6 +28,7 @@ if (process.env.NODE_ENV != "production"){
 }
 
 else {
+    var fileName = "../client.json";
     clientId = process.env.clientId;
     clientSecret = process.env.clientSecret;
 }
