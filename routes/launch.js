@@ -87,12 +87,6 @@ router.post('/auth', function (req, res, next) {
     postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss);
     postUrl = postUrl.replace("\"","");
     res.redirect(postUrl);
-    /*     request.post(postUrl, {}, function(error, response, body){
-            console.log(postUrl);
-            if(!error){
-                res.send(response.stringify); 
-            }
-        }); */
 });
 
 //redirected to once we have the auth code
