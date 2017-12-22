@@ -3,18 +3,17 @@
 {% block content %}
   <h3>Step 1 </h3>
     <h5>
-      You've launched your test app to the launch URL specified and have received back the iss URL which you'll use to query the metadata endpoint.
+      You've launched your test app to the launch URL specified and have received back the iss URL which you'll use to query the metadata endpoint to retrieve the conformance statement.
       Once you've done that, you receive the OAuth2 auth and token endpoints which you'll call to actually authenticate using your client ID/secret.
     </h5>
 
-  <table>
-    {% for key, value in vars %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ value }}/td>
-            </tr>    
-    {% endfor %}
-  </table>
+{% include "params.nunjucks" %}
+
+<details>
+  <summary>Conformance statement</summary>
+  <pre lang="xml">{{ conformance }}</pre>
+</details>
+
   <form action='/launch/auth' method='post'>
     <input type="hidden" name="authUrl" value={{vars.auth}}/>
     <input type="hidden" name="launch" value={{vars.launch}}/>

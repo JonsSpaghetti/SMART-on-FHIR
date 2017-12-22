@@ -6,12 +6,6 @@
         You queried the token endpoint to get an access token and a refresh token.  You can now use these to call FHIR endpoints.
     </h5>
 
-  <table>
-    {% for key, value in vars %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ value }}</td>
-            </tr>    
-    {% endfor %}
-  </table>
+{% include "params.nunjucks" %}
+
 {% endblock %}

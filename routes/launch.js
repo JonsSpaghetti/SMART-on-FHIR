@@ -3,6 +3,7 @@ var router = express.Router();
 var request = require('request');
 var parseXML = require('xml2js').parseString;
 var fs = require("fs");
+var beautify = require("vkbeautify");
 
 //flow of views is launch (from first redirect) -> code (when we have access code) -> access (when we have access token).
 // GET /launch?iss=https%3A%2F%2Fsb-fhir-dstu2.smarthealthit.org%2Fsmartdstu2%2Fdata&launch=Qk9g9o 200 1123.533 ms - 748
@@ -16,6 +17,7 @@ var fs = require("fs");
 
 var config;
 if (process.env.NODE_ENV != "production"){
+    var fileName = "../client.json";
     try {
         config = require(fileName); 
         clientId = config.clientId;
@@ -27,7 +29,6 @@ if (process.env.NODE_ENV != "production"){
 }
 
 else {
-    var fileName = "../client.json";
     clientId = process.env.clientId;
     clientSecret = process.env.clientSecret;
 }
@@ -43,7 +44,7 @@ router.get('/', function (req, res, next) { //Get request to /launch
 
     //Get the conformance statement from metadata endpoint
     //On completion, we call res.render to avoid getting errors that authURL isn't defined
-    st = new Date(); //perf test
+    var st = new Date(); //perf testing
     request.get(decodeIss + '/metadata', {}, function (error, response, body) {
         if (!error) {
             parseXML(body, function (err, result) {
@@ -56,8 +57,8 @@ router.get('/', function (req, res, next) { //Get request to /launch
             // //authURL.rest[0].security = location of oauth URIs
             // authUrl = authUrl.rest[0].security.extension[0];
 
-            end = new Date(); //perf testing
-            console.log("Time: " + (end.getTime() - st.getTime()) + "ms"); //perf testing
+            var end = new Date(); //perf testing
+            console.log("Request time: " + (end.getTime() - st.getTime()) + "ms"); //perf testing
             var vars = {
                     iss: decodeIss,
                     launch: launch,
@@ -66,7 +67,7 @@ router.get('/', function (req, res, next) { //Get request to /launch
                 };
             res.locals.vars = vars;
                 //https://medium.com/@andy.neale/nunjucks-a-javascript-template-engine-7731d23eb8cc
-            res.render('launch', {"vars": vars});
+            res.render('launch', {"vars": vars, conformance: beautify.xml(body)});
         }
     });
 

@@ -6,14 +6,8 @@
       You query the OAuth2 authorize endpoint in order to get an authorization code.  Now you have one as seen below.
     </h5>
 
-  <table>
-    {% for key, value in vars %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ value }}</td>
-            </tr>    
-    {% endfor %}
-  </table>
+{% include "params.nunjucks" %}
+
   <form action='/launch/access' method='get'>
     <input type="hidden" name="code" value={{vars.authCode}}/>
     <input type="hidden" name="state" value={{vars.state}}/>
