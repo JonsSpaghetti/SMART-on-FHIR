@@ -8,4 +8,9 @@
 
 {% include "params.nunjucks" %}
 
+<details>
+  <summary>Full request body</summary>
+  <pre lang="json">{{ body }}</pre>
+</details>
+
 {% endblock %}

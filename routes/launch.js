@@ -62,8 +62,8 @@ router.get('/', function (req, res, next) { //Get request to /launch
             var vars = {
                     iss: decodeIss,
                     launch: launch,
-                    auth: authUrl,
-                    token: tokenUrl
+                    auth_url: authUrl,
+                    token_url: tokenUrl
                 };
             res.locals.vars = vars;
                 //https://medium.com/@andy.neale/nunjucks-a-javascript-template-engine-7731d23eb8cc
@@ -95,8 +95,8 @@ router.get('/code', function (req, res, next) {
     authCode = req.query.code;
     state = req.query.state;
     var vars = {
-            clientId: clientId,
-            authCode: authCode,
+            client_id: clientId,
+            auth_code: authCode,
             state: state
         };
     res.render('code', { "vars": vars});
@@ -129,16 +129,15 @@ router.get('/access', function (req, res, next) {
         if (!error) {
             // res.render('index');
             // res.send(body)
-            console.log(JSON.stringify(post, null, 4));
+            // console.log(JSON.stringify(post, null, 4)); //debugging
             reqBod = JSON.parse(body);
             var vars = {
-                    token: reqBod.access_token,
+                    access_token: reqBod.access_token,
                     token_type: reqBod.token_type,
-                    refresh: reqBod.refresh_token, 
-                    patient: reqBod.patient,
-                    body: JSON.stringify(body)
+                    refresh_token: reqBod.refresh_token, 
+                    patient_FHIR_id: reqBod.patient,
                 };
-            res.render('access', {"vars": vars});
+            res.render('access', {"vars": vars, body: body });
         }
     });
 
