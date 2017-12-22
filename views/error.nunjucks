@@ -2,5 +2,6 @@
 
 {% block content %}
 There was an error.
+<br/>
 {{ error.stack }}
 {% endblock %}

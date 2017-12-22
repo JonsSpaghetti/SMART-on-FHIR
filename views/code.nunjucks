@@ -9,8 +9,6 @@
 {% include "params.nunjucks" %}
 
   <form action='/launch/access' method='get'>
-    <input type="hidden" name="code" value={{vars.authCode}}/>
-    <input type="hidden" name="state" value={{vars.state}}/>
     <button class="btnSubmit" type="submit">Get access token</button>
   </form>
 {% endblock %}

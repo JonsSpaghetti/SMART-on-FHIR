@@ -9,15 +9,14 @@
 
 {% include "params.nunjucks" %}
 
+
+<h5>Notice the token/auth endpoints are located in the security -> extension section of the XML document</h5>
 <details>
   <summary>Conformance statement</summary>
   <pre lang="xml">{{ conformance }}</pre>
 </details>
 
   <form action='/launch/auth' method='post'>
-    <input type="hidden" name="authUrl" value={{vars.auth}}/>
-    <input type="hidden" name="launch" value={{vars.launch}}/>
-    <input type="hidden" name="token" value={{vars.token}}/>
     <button class="btnSubmit" type="submit">Get auth code </button>
   </form>
 {% endblock %}

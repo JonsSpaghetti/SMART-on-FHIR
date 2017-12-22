@@ -15,6 +15,7 @@ var beautify = require("vkbeautify");
 //from /launch/code, hit button to get access token -> /launch/access -> hit token endpoint -> display access page.
 //Maybe at some point, use https://github.com/tjanczuk/iisnode to host on iis locally
 
+const  glob = {}; //Defining global namespace so that we can use this for things like decoded ISS values and tokenURL. 
 var config;
 if (process.env.NODE_ENV != "production"){
     var fileName = "../client.json";
@@ -35,38 +36,29 @@ else {
 
 router.get('/', function (req, res, next) { //Get request to /launch
     //decode iss parameter from query string, get launch token from query string.
-    decodeIss = decodeURIComponent(req.query.iss);
-    launch = req.query.launch;
-    //for testing purposes
-    // arr = decodeIss.split('/');
-    // arr.pop();
-    // decodeIss = arr.join('/');
+    glob.decodeIss = decodeURIComponent(req.query.iss);
+    glob.launch = req.query.launch;
 
     //Get the conformance statement from metadata endpoint
     //On completion, we call res.render to avoid getting errors that authURL isn't defined
     var st = new Date(); //perf testing
-    request.get(decodeIss + '/metadata', {}, function (error, response, body) {
+    request.get(glob.decodeIss + '/metadata', {}, function (error, response, body) {
+        var authUrl;
         if (!error) {
             parseXML(body, function (err, result) {
-                authUrl = result.Conformance.rest[0].security[0].extension[0].extension[0].valueUri[0].$.value;
-                tokenUrl = result.Conformance.rest[0].security[0].extension[0].extension[1].valueUri[0].$.value;
+                glob.authUrl = result.Conformance.rest[0].security[0].extension[0].extension[0].valueUri[0].$.value;
+                glob.tokenUrl = result.Conformance.rest[0].security[0].extension[0].extension[1].valueUri[0].$.value;
                 //console.log(result);
             });
-            // Not used with Epic sandbox.
-            // authUrl = JSON.parse(body);
-            // //authURL.rest[0].security = location of oauth URIs
-            // authUrl = authUrl.rest[0].security.extension[0];
 
             var end = new Date(); //perf testing
             console.log("Request time: " + (end.getTime() - st.getTime()) + "ms"); //perf testing
             var vars = {
-                    iss: decodeIss,
-                    launch: launch,
-                    auth_url: authUrl,
-                    token_url: tokenUrl
+                    iss: glob.decodeIss,
+                    launch: glob.launch,
+                    auth_url: glob.authUrl,
+                    token_url: glob.tokenUrl
                 };
-            res.locals.vars = vars;
-                //https://medium.com/@andy.neale/nunjucks-a-javascript-template-engine-7731d23eb8cc
             res.render('launch', {"vars": vars, conformance: beautify.xml(body)});
         }
     });
@@ -76,27 +68,24 @@ router.get('/', function (req, res, next) { //Get request to /launch
 
 //Called from button press after launch so that we can get the auth code
 router.post('/auth', function (req, res, next) {
-    authUrl = req.body.authUrl;
-    launchToken = req.body.launch;
-    tokenUrl = req.body.token;
     if (process.env.NODE_ENV == "production") {
-        redirectURI = encodeURIComponent("https://" + req.headers.host + "/launch/code");
+        glob.redirectURI = encodeURIComponent("https://" + req.headers.host + "/launch/code");
     }
     else {
-        redirectURI = encodeURIComponent("http://localhost:3000/launch/code");
+        glob.redirectURI = encodeURIComponent("http://localhost:3000/launch/code");
     }
-    postUrl = authUrl + "?redirect_uri=" + redirectURI + "&response_type=code&scope=launch&state=123&launch=" + launchToken + "&client_id=" + clientId + "&aud=" + encodeURIComponent(decodeIss);
+    var postUrl = glob.authUrl + "?redirect_uri=" + glob.redirectURI + "&response_type=code&scope=launch&state=123&launch=" + glob.launch + "&client_id=" + clientId + "&aud=" + encodeURIComponent(glob.decodeIss);
     postUrl = postUrl.replace("\"","");
     res.redirect(postUrl);
 });
 
 //redirected to once we have the auth code
 router.get('/code', function (req, res, next) {
-    authCode = req.query.code;
-    state = req.query.state;
+    glob.authCode = req.query.code;
+    var state = req.query.state;
     var vars = {
             client_id: clientId,
-            auth_code: authCode,
+            auth_code: glob.authCode,
             state: state
         };
     res.render('code', { "vars": vars});
@@ -104,43 +93,63 @@ router.get('/code', function (req, res, next) {
 
 //called once we hit the button to get access token -> makes the call to the token endpoint for us.
 router.get('/access', function (req, res, next) {
-    authCode = req.query.code;
-    state = req.query.state;
+    var state = req.query.state;
 
     //Auth header needs base64 encoding of clientId:clientSecret
     //Try also url encoding client ID + secret
     //toEncode = encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret);
-    toEncode = clientId + ":" + clientSecret;
+    var toEncode = clientId + ":" + clientSecret;
     //toEncode = encodeURIComponent(toEncode);// is this needed?
-    buff = new Buffer(toEncode);
-    authHeader = buff.toString('base64');
+    var buff = new Buffer(toEncode);
+    var authHeader = buff.toString('base64');
 
-    postConfig = {
+    var postConfig = {
         method: 'POST',
-        url: tokenUrl,
-        body: "grant_type=authorization_code&code=" + authCode + "&redirect_uri=" + redirectURI,// + "&client_id=" + clientId + "&client_secret=" + clientSecret,
+        url: glob.tokenUrl,
+        body: "grant_type=authorization_code&code=" + glob.authCode + "&redirect_uri=" + glob.redirectURI,// + "&client_id=" + clientId + "&client_secret=" + clientSecret,
         headers: {
             'content-type': "application/x-www-form-urlencoded",
             Authorization: "Basic " + authHeader,
         },
     }
 
-    post = request(postConfig, function (error, response, body) {
+    var post = request(postConfig, function (error, response, body) {
         if (!error) {
             // res.render('index');
             // res.send(body)
             // console.log(JSON.stringify(post, null, 4)); //debugging
             reqBod = JSON.parse(body);
+
+            glob.access = reqBod.access_token;
+            glob.refresh = reqBod.refresh_token;
+            glob.patId = reqBod.patient
+
             var vars = {
-                    access_token: reqBod.access_token,
+                    access_token: glob.access,
                     token_type: reqBod.token_type,
-                    refresh_token: reqBod.refresh_token, 
-                    patient_FHIR_id: reqBod.patient,
+                    refresh_token: glob.refresh,
+                    patient_FHIR_id: glob.patId,
                 };
             res.render('access', {"vars": vars, body: body });
         }
     });
 
+});
+
+router.get('/fhirrequest', function(req, res, next){
+
+    var vars = {
+        access_token: glob.access,
+        launch_token: glob.launch,
+        refresh_token: glob.refresh,
+        patient_id: glob.patId,
+        patUrl: "https://apporchard.epic.com/interconnect-ao83prd-oauth/api/FHIR/DSTU2/Patient/", 
+        token_url:  glob.tokenUrl
+    }
+
+    res.render('fhirrequest', {
+        "vars": vars 
+    });
 });
 
 module.exports = router;

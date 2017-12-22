@@ -1,0 +1,37 @@
+{% extends "layout.nunjucks" %}
+
+{% block content %}
+
+{% include "params.nunjucks" %}
+
+<script>
+//TODO - troubleshoot why this doesn't work....
+    function patFhirReq() {
+        var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        xhr.open('GET', "{{vars.patUrl}}{{vars.patient_id}}");
+        xhr.onreadystatechange = function() {
+            if (xhr.status == 200) {
+                document.getElementById("result").innerHTML =
+                xhr.responseText;
+            }
+        };
+        xhr.setRequestHeader('Authorization', 'Bearer {{vars.access_token}}')
+        xhr.send();
+        return xhr;
+    }
+
+    function refreshTokenReq(){
+        //TODO.
+    }
+</script>
+
+<pre id="result" lang="XML"></pre> 
+<!-- TODO - make these ajax requests from the page so we can update dynamically -->
+  <form onsubmit='return window.patFhirReq();' method='get'>
+    <button class="btnSubmit" type="submit">Get patient resource</button>
+  </form>
+  <form onsubmit='return refreshTokenreq();'>
+    <button class="btnSubmit" type="submit">Get a new refresh token</button>
+  </form>
+
+{% endblock %}
