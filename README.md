@@ -1,6 +1,6 @@
 ## SMART on FHIR launch flow sample app for learning purposes.
-#Now hosted at https://damp-river-36466.herokuapp.com/
-#specify the launch endpoint in any EMR launch tester as https://damp-river-36466.herokuapp.com/launch
+#Now hosted at https://smart-test-app.herokuapp.com/
+#specify the launch endpoint in any EMR launch tester as https://smart-test-app.herokuapp.com/launch
 #YOU MUST RUN IN CHROME DUE TO THE USAGE OF THE DETAILS TAG.
 
 # SMART-on-FHIR
