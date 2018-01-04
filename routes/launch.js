@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-var parseXML = require('xml2js').parseString;
+//var parseXML = require('xml2js').parseString; no longer necessary with conversion back to JSON.
 var fs = require("fs");
 var beautify = require("vkbeautify");
 
@@ -42,14 +42,19 @@ router.get('/', function (req, res, next) { //Get request to /launch
     //Get the conformance statement from metadata endpoint
     //On completion, we call res.render to avoid getting errors that authURL isn't defined
     var st = new Date(); //perf testing
-    request.get(glob.decodeIss + '/metadata', {}, function (error, response, body) {
-        var authUrl;
+    request.get(glob.decodeIss + '/metadata', {headers: {'Accept': 'application/json'}}, function (error, response, body) {
         if (!error) {
-            parseXML(body, function (err, result) {
-                glob.authUrl = result.Conformance.rest[0].security[0].extension[0].extension[0].valueUri[0].$.value;
-                glob.tokenUrl = result.Conformance.rest[0].security[0].extension[0].extension[1].valueUri[0].$.value;
-                //console.log(result);
-            });
+            var jsonConformance = JSON.parse(body);
+            //authURL.rest[0].security = location of oauth URIs
+            glob.authUrl = jsonConformance.rest[0].security.extension[0].extension[0].valueUri;
+            glob.tokenUrl = jsonConformance.rest[0].security.extension[0].extension[1].valueUri;
+            
+            //No longer necessary with header of Accept: application/json.
+            //parseXML(body, function (err, result) {
+            //    glob.authUrl = result.Conformance.rest[0].security[0].extension[0].extension[0].valueUri[0].$.value;
+            //    glob.tokenUrl = result.Conformance.rest[0].security[0].extension[0].extension[1].valueUri[0].$.value;
+            //    //console.log(result);
+            //});
 
             var end = new Date(); //perf testing
             console.log("Request time: " + (end.getTime() - st.getTime()) + "ms"); //perf testing
@@ -59,7 +64,7 @@ router.get('/', function (req, res, next) { //Get request to /launch
                     auth_url: glob.authUrl,
                     token_url: glob.tokenUrl
                 };
-            res.render('launch', {"vars": vars, conformance: beautify.xml(body)});
+            res.render('launch', {"vars": vars, conformance: beautify.json(JSON.stringify(jsonConformance))});
         }
     });
 

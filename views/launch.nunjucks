@@ -10,10 +10,11 @@
 {% include "params.nunjucks" %}
 
 
-<h5>Notice the token/auth endpoints are located in the security -> extension section of the XML document</h5>
+<h5>Notice the token/auth endpoints are located in the security -> extension section of the JSON object</h5>
+<h5>This can be returned as either JSON or XML using the header Accept: application/json or Accept: application/xml.</h5>
 <details>
   <summary>Conformance statement</summary>
-  <pre lang="xml">{{ conformance }}</pre>
+  <pre lang="json">{{ conformance }}</pre>
 </details>
 
   <form action='/launch/auth' method='post'>
