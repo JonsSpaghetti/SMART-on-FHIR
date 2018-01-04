@@ -13,11 +13,13 @@
         <pre lang="json">{{ body }}</pre>
     </details>
 
+<!-- not ready for PRD
   <form action='/launch/fhirrequest' method='get'>
     <input type="hidden" name="access" value={{vars.access_token}}/>
     <input type="hidden" name="refresh" value={{vars.refresh_token}}/>
     <input type="hidden" name="patid" value={{vars.patient_FHIR_id}}/>
     <button class="btnSubmit" type="submit">Make example FHIR requests</button>
   </form>
+-->
 
 {% endblock %}

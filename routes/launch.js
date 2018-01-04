@@ -135,7 +135,7 @@ router.get('/access', function (req, res, next) {
                     refresh_token: glob.refresh,
                     patient_FHIR_id: glob.patId,
                 };
-            res.render('access', {"vars": vars, body: body });
+            res.render('access', {"vars": vars, body: beautify.json(body) });
         }
     });
 
