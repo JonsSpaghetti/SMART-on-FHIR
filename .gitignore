@@ -60,3 +60,5 @@ typings/
 # client secret file
 *client.json
 
+#svn directory since we're using that now
+.svn
