@@ -25,7 +25,7 @@
   <pre lang="json">{{ conformance }}</pre>
 </details>
 
-  <form action='/launch/auth' method='post'>
+  <form action='/auth' method='post'>
     <button class="btnSubmit" type="submit">Get auth code </button>
   </form>
 {% endblock %}

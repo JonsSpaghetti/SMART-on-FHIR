@@ -23,7 +23,7 @@ It will look like this:</p>
 
 {% include "params.nunjucks" %}
 
-  <form action='/launch/access' method='get'>
+  <form action='/access' method='get'>
     <button class="btnSubmit" type="submit">Get access token</button>
   </form>
 {% endblock %}
