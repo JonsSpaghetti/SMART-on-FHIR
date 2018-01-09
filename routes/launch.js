@@ -17,12 +17,23 @@ var beautify = require("vkbeautify");
 
 const  glob = {}; //Defining global namespace so that we can use this for things like decoded ISS values and tokenURL. 
 var config;
+
+function authHeader(){
+    //Auth header needs base64 encoding of clientId:clientSecret
+    //Try also url encoding client ID + secret
+    //toEncode = encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret);
+    var toEncode = glob.clientId + ":" + glob.clientSecret;
+    //toEncode = encodeURIComponent(toEncode);// is this needed?
+    var buff = new Buffer(toEncode);
+    return buff.toString('base64');
+}
+
 if (process.env.NODE_ENV != "production"){
     var fileName = "../client.json";
     try {
         config = require(fileName); 
-        clientId = config.clientId;
-        clientSecret = config.clientSecret;
+        glob.clientId = config.clientId;
+        glob.clientSecret = config.clientSecret;
     } catch (error) {
         config = {};
         console.log("Unable to read file " + fileName);
@@ -30,8 +41,8 @@ if (process.env.NODE_ENV != "production"){
 }
 
 else {
-    clientId = process.env.clientId;
-    clientSecret = process.env.clientSecret;
+    glob.clientId = process.env.clientId;
+    glob.clientSecret = process.env.clientSecret;
 }
 
 router.get('/', function (req, res, next) { //Get request to /launch
@@ -79,7 +90,7 @@ router.post('/auth', function (req, res, next) {
     else {
         glob.redirectURI = encodeURIComponent("http://localhost:3000/launch/code");
     }
-    var postUrl = glob.authUrl + "?redirect_uri=" + glob.redirectURI + "&response_type=code&scope=launch&state=123&launch=" + glob.launch + "&client_id=" + clientId + "&aud=" + encodeURIComponent(glob.decodeIss);
+    var postUrl = glob.authUrl + "?redirect_uri=" + glob.redirectURI + "&response_type=code&scope=launch&state=123&launch=" + glob.launch + "&client_id=" + glob.clientId + "&aud=" + encodeURIComponent(glob.decodeIss);
     postUrl = postUrl.replace("\"","");
     res.redirect(postUrl);
 });
@@ -89,7 +100,7 @@ router.get('/code', function (req, res, next) {
     glob.authCode = req.query.code;
     var state = req.query.state;
     var vars = {
-            client_id: clientId,
+            client_id: glob.clientId,
             auth_code: glob.authCode,
             state: state
         };
@@ -100,21 +111,13 @@ router.get('/code', function (req, res, next) {
 router.get('/access', function (req, res, next) {
     var state = req.query.state;
 
-    //Auth header needs base64 encoding of clientId:clientSecret
-    //Try also url encoding client ID + secret
-    //toEncode = encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret);
-    var toEncode = clientId + ":" + clientSecret;
-    //toEncode = encodeURIComponent(toEncode);// is this needed?
-    var buff = new Buffer(toEncode);
-    var authHeader = buff.toString('base64');
-
     var postConfig = {
         method: 'POST',
         url: glob.tokenUrl,
         body: "grant_type=authorization_code&code=" + glob.authCode + "&redirect_uri=" + glob.redirectURI,// + "&client_id=" + clientId + "&client_secret=" + clientSecret,
         headers: {
             'content-type': "application/x-www-form-urlencoded",
-            Authorization: "Basic " + authHeader,
+            Authorization: "Basic " + authHeader(),
         },
     }
 
@@ -134,11 +137,38 @@ router.get('/access', function (req, res, next) {
                     token_type: reqBod.token_type,
                     refresh_token: glob.refresh,
                     patient_FHIR_id: glob.patId,
+                    token_url: glob.tokenUrl,
+                    postBody: postConfig.body
                 };
             res.render('access', {"vars": vars, body: beautify.json(body) });
         }
     });
 
+});
+
+router.get('/refresh', function(req, res, next){
+    //query token endpoint with refresh token etc. and then send that back to page.
+
+    var req = {
+        method: 'POST',
+        url: glob.tokenUrl,
+        body: "grant_type=refresh_token&refresh_token=" + glob.refresh + "&redirect_uri=" + glob.redirectURI,// + "&client_id=" + clientId + "&client_secret=" + clientSecret,
+        headers: {
+            'content-type': "application/x-www-form-urlencoded",
+            Authorization: "Basic " + authHeader(),
+        },
+    }
+
+    
+    var post = request(req, function (error, response, body) {
+        if (!error) {
+            reqBod = JSON.parse(body);
+            res.send({
+                accessToken: reqBod.access_token,
+                postBody: req.body
+            });
+        }
+    });
 });
 
 router.get('/fhirrequest', function(req, res, next){

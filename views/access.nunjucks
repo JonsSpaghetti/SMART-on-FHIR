@@ -5,13 +5,39 @@
     <h5>
         You queried the token endpoint to get an access token and a refresh token.  You can now use these to call FHIR endpoints.
     </h5>
-
+    <h5>
+        Keep in mind that you'll need to include the header (<code>Basic base64("clientID:clientSecret")</code>) that we've previously mentioned in your FHIR calls as well as your calls to refresh your access token with the refresh token.
+    </h5>
+    <br/>
 {% include "params.nunjucks" %}
 
-    <details>
-        <summary>Full request body</summary>
+    <script>
+        function refreshTokenReq(){
+            var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            xhr.open('GET', "/launch/refresh");
+            xhr.onreadystatechange = function() {
+                if (xhr.status == 200) {
+                    var parsedResponse = JSON.parse(xhr.responseText);
+                    document.getElementById("accessToken").innerHTML = parsedResponse.accessToken;
+                    document.getElementById("postBody").innerHTML = parsedResponse.postBody;
+                }
+            };
+            xhr.setRequestHeader('Authorization', 'Bearer {{vars.refresh_token}}')
+            xhr.send();
+            return xhr;
+        }
+    </script>
+
+    <details onclick="hidePre()">
+        <summary>Full request body (click to collapse)</summary>
         <pre lang="json">{{ body }}</pre>
     </details>
+
+    <h5>POST Request body: </h5>
+    <p id="postBody">{{ vars.postBody }}</p>
+    <h5>Access Token: </h5>
+    <p id="accessToken">{{ vars.access_token }}</p>
+    <button onclick="refreshTokenReq()">Click to get a new access token using the refresh token</button>
 
 <!-- not ready for PRD
   <form action='/launch/fhirrequest' method='get'>

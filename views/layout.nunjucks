@@ -3,6 +3,7 @@
     <head> 
        <title>{{ title}}</title>
        <link rel='stylesheet' href='/stylesheets/style.css'/>
+       <script src="/js/collapse.js"></script>
     </head>
 {% block header %}
 <h1>OAuth2 tester</h1>

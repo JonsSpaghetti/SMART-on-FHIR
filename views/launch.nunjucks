@@ -7,13 +7,21 @@
       Once you've done that, you receive the OAuth2 auth and token endpoints which you'll call to actually authenticate using your client ID/secret.
     </h5>
 
+  <h4>Query String Parameters</h4>
+  <h5>There should be two URL parameters:
+    <ul>
+      <li>iss: The base FHIR URL which can be overriden based on client ID.</li>
+      <li>launch: The launch token which we'll pass to the auth endpoint to exchange for an authorization code</li>
+    </ul>
+  </h5>
+
 {% include "params.nunjucks" %}
 
 
 <h5>Notice the token/auth endpoints are located in the security -> extension section of the JSON object</h5>
 <h5>This can be returned as either JSON or XML using the header Accept: application/json or Accept: application/xml.</h5>
-<details>
-  <summary>Conformance statement</summary>
+<details onclick="hidePre()">
+  <summary>Conformance statement (click to collapse)</summary>
   <pre lang="json">{{ conformance }}</pre>
 </details>
 

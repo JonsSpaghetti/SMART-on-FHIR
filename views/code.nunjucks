@@ -3,8 +3,23 @@
 {% block content %}
 <h3>Step 2 </h3>
     <h5>
-      You query the OAuth2 authorize endpoint in order to get an authorization code.  Now you have one as seen below.
+      You query the OAuth2 authorize endpoint in order to get an authorization code and then you get redirected here.  Now you have one as seen below.
     </h5>
+
+    <h4>Query String Parameters</h4>
+    <h5>There should be two URL parameters:
+      <ul>
+        <li>code: The authorization code returned by the authorization endpoint.
+        <li>state: The state returned by the authorization endpoint.
+      </ul>
+    </h5>
+
+<h4>Next Step</h4>
+<h5>The next step is to make a POST to the token endpoint on the Interconnect server to retrieve the access token.</h5>
+<p>Your request must contain an "Authorizatione" header which contains the word "Basic" followed by a base64 string of your clientID:clientSecret (if you're using a client secret).
+It will look like this:</p>
+<code>Basic base64("clientID:clientSecret")</code>
+<br/>
 
 {% include "params.nunjucks" %}
 
