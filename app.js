@@ -9,7 +9,6 @@ var pug = require('pug');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var launch = require('./routes/launch');
 
 var app = express();
 
@@ -29,7 +28,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/launch', launch);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
