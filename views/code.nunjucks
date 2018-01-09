@@ -16,7 +16,7 @@
 
 <h4>Next Step</h4>
 <h5>The next step is to make a POST to the token endpoint on the Interconnect server to retrieve the access token.</h5>
-<p>Your request must contain an "Authorizatione" header which contains the word "Basic" followed by a base64 string of your clientID:clientSecret (if you're using a client secret).
+<p>Your request must contain an "Authorization" header which contains the word "Basic" followed by a base64 string of your clientID:clientSecret (if you're using a client secret).
 It will look like this:</p>
 <code>Basic base64("clientID:clientSecret")</code>
 <br/>
