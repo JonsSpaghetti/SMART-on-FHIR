@@ -6,7 +6,10 @@
         You queried the token endpoint to get an access token and a refresh token.  You can now use these to call FHIR endpoints.
     </h5>
     <h5>
-        Keep in mind that you'll need to include the header (<code>Basic base64("clientID:clientSecret")</code>) that we've previously mentioned in your FHIR calls as well as your calls to refresh your access token with the refresh token.
+        Keep in mind that you'll need to include the header (<code>Basic base64("clientID:clientSecret")</code>) that we've previously mentioned in your calls to refresh your access token with the refresh token.
+    </h5>
+    <h5>
+        If you're making a request to a FHIR resource, you'll instead need to include a header <code> Bearer accessToken. </code>
     </h5>
     <br/>
 {% include "params.nunjucks" %}
@@ -17,12 +20,17 @@
             xhr.open('GET', "/refresh");
             xhr.onreadystatechange = function() {
                 if (xhr.status == 200) {
-                    var parsedResponse = JSON.parse(xhr.responseText);
-                    document.getElementById("accessToken").innerHTML = parsedResponse.accessToken;
-                    document.getElementById("postBody").innerHTML = parsedResponse.postBody;
+                    if (xhr.responseText = null){
+                        return;
+                    }
+                    else{
+                        var parsedResponse = JSON.parse(xhr.responseText);
+                        document.getElementById("accessToken").innerHTML = parsedResponse.accessToken;
+                        document.getElementById("postBody").innerHTML = parsedResponse.postBody;
+                    }
                 }
             };
-            xhr.setRequestHeader('Authorization', 'Bearer {{vars.refresh_token}}')
+            xhr.setRequestHeader('Authorization', 'Bearer {{vars.refresh_token}}');
             xhr.send();
             return xhr;
         }
