@@ -5,6 +5,8 @@ var request = require('request');
 var fs = require("fs");
 var beautify = require("vkbeautify");
 
+request.debug = true;
+
 //flow of views is launch (from first redirect) -> code (when we have access code) -> access (when we have access token).
 // GET /launch?iss=https%3A%2F%2Fsb-fhir-dstu2.smarthealthit.org%2Fsmartdstu2%2Fdata&launch=Qk9g9o 200 1123.533 ms - 748
 // POST /launch/auth 302 39.403 ms - 642
