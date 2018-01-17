@@ -1,31 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-//var parseXML = require('xml2js').parseString; no longer necessary with conversion back to JSON.
 var fs = require("fs");
 var beautify = require("vkbeautify");
 
 request.debug = true;
 
-//flow of views is launch (from first redirect) -> code (when we have access code) -> access (when we have access token).
-// GET /launch?iss=https%3A%2F%2Fsb-fhir-dstu2.smarthealthit.org%2Fsmartdstu2%2Fdata&launch=Qk9g9o 200 1123.533 ms - 748
-// POST /launch/auth 302 39.403 ms - 642
-// GET /launch/code?code=SAs65J&state=123 200 32.805 ms - 304
-// GET /launch/access?code=SAs65J&state=123 200 409.273 ms - 823
-
-//so /launch/ -> /launch/auth upon button to get auth code -> redirect to /launch/code.
-//from /launch/code, hit button to get access token -> /launch/access -> hit token endpoint -> display access page.
-//Maybe at some point, use https://github.com/tjanczuk/iisnode to host on iis locally
-
 const  glob = {}; //Defining global namespace so that we can use this for things like decoded ISS values and tokenURL. 
 var config;
 
 function authHeader(){
-    //Auth header needs base64 encoding of clientId:clientSecret
-    //Try also url encoding client ID + secret
-    //toEncode = encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret);
     var toEncode = glob.clientId + ":" + glob.clientSecret;
-    //toEncode = encodeURIComponent(toEncode);// is this needed?
     var buff = new Buffer(toEncode);
     return buff.toString('base64');
 }
@@ -58,17 +43,9 @@ router.get('/launch', function (req, res, next) { //Get request to /launch
     request.get(glob.decodeIss + '/metadata', {headers: {'Accept': 'application/json'}}, function (error, response, body) {
         if (!error) {
             var jsonConformance = JSON.parse(body);
-            //authURL.rest[0].security = location of oauth URIs
             glob.authUrl = jsonConformance.rest[0].security.extension[0].extension[0].valueUri;
             glob.tokenUrl = jsonConformance.rest[0].security.extension[0].extension[1].valueUri;
             
-            //No longer necessary with header of Accept: application/json.
-            //parseXML(body, function (err, result) {
-            //    glob.authUrl = result.Conformance.rest[0].security[0].extension[0].extension[0].valueUri[0].$.value;
-            //    glob.tokenUrl = result.Conformance.rest[0].security[0].extension[0].extension[1].valueUri[0].$.value;
-            //    //console.log(result);
-            //});
-
             var end = new Date(); //perf testing
             console.log("Request time: " + (end.getTime() - st.getTime()) + "ms"); //perf testing
             var vars = {
@@ -125,9 +102,6 @@ router.get('/access', function (req, res, next) {
 
     var post = request(postConfig, function (error, response, body) {
         if (!error) {
-            // res.render('index');
-            // res.send(body)
-            // console.log(JSON.stringify(post, null, 4)); //debugging
             reqBod = JSON.parse(body);
 
             glob.access = reqBod.access_token;
@@ -160,7 +134,6 @@ router.get('/refresh', function(req, res, next){
             Authorization: "Basic " + authHeader(),
         },
     }
-
     
     var post = request(req, function (error, response, body) {
         if (!error) {
