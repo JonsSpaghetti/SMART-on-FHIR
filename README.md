@@ -1,7 +1,7 @@
 ## SMART on FHIR launch flow sample app for learning purposes.
 #Now hosted at https://smart-test-app.herokuapp.com/
 #specify the launch endpoint in any EMR launch tester as https://smart-test-app.herokuapp.com/launch
-#YOU MUST RUN IN CHROME DUE TO THE USAGE OF THE DETAILS TAG.
+Note - if you launch from the herokuapp site, you do not need to perform the below setup.  You're calling my hosted version which probably won't have a client ID/secret available for the EMR you're working with.
 
 # SMART-on-FHIR
 1. Get a client ID and secret and set app as confidential with EMR vendor
