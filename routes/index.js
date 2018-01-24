@@ -71,7 +71,7 @@ router.post('/auth', function (req, res, next) {
     }
     var postUrl = glob.authUrl + "?redirect_uri=" + glob.redirectURI + "&response_type=code&scope=launch&state=123&launch=" + glob.launch + "&client_id=" + glob.clientId + "&aud=" + encodeURIComponent(glob.decodeIss);
     postUrl = postUrl.replace("\"","");
-    res.redirect(postUrl);
+    res.redirect(postUrl); //send request to the authorization endpoint with correct redirect URI as built above.
 });
 
 //redirected to once we have the auth code
