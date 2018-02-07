@@ -131,7 +131,7 @@ router.get('/refresh', function(req, res, next){
         body: "grant_type=refresh_token&refresh_token=" + glob.refresh + "&redirect_uri=" + glob.redirectURI,// + "&client_id=" + clientId + "&client_secret=" + clientSecret,
         headers: {
             'content-type': "application/x-www-form-urlencoded",
-            Authorization: "Basic " + authHeader(),
+            Authorization: "Basic " + authHeader()
         },
     }
     
