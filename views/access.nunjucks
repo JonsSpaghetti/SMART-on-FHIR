@@ -15,7 +15,9 @@
 {% include "params.nunjucks" %}
 
     <script>
+        var count = 0;
         function refreshTokenReq(){
+            count++;
             var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             xhr.open('GET', "/refresh");
             xhr.onreadystatechange = function() {
@@ -25,9 +27,9 @@
                     }
                     else{
                         var parsedResponse = JSON.parse(xhr.responseText);
-                        console.log(parsedResponse.accessToken + "\n" + parsedResponse.postBody);
+                        console.log(parsedResponse.accessToken + "\n" + parsedResponse.postBody)
                         document.getElementById("accessToken").innerHTML = parsedResponse.accessToken;
-                        document.getElementById("postBody").innerHTML = parsedResponse.postBody;
+                        document.getElementById("postBody").innerHTML = parsedResponse.postBody + " " + count;
                     }
                 }
             };
