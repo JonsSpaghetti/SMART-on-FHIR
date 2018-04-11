@@ -69,6 +69,7 @@ router.post('/auth', function (req, res, next) {
     else {
         glob.redirectURI = encodeURIComponent("http://localhost:3000/code");
     }
+    //Redirect URI for Epic is case sensitive + exact string matched.
     var postUrl = glob.authUrl + "?redirect_uri=" + glob.redirectURI + "&response_type=code&scope=launch&state=123&launch=" + glob.launch + "&client_id=" + glob.clientId + "&aud=" + encodeURIComponent(glob.decodeIss);
     postUrl = postUrl.replace("\"","");
     res.redirect(postUrl); //send request to the authorization endpoint with correct redirect URI as built above.
